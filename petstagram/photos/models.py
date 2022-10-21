@@ -1,19 +1,16 @@
+from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
 from django.db import models
 
 # Create your models here.
 from petstagram.pets.models import Pet
 
-"""
-The field Photo is required:
-Photo - the user can upload a picture from storage, the maximum size of the photo can be 5MB
-The fields description and tagged pets are optional:
-Description - a user can write any description of the photo; it should consist of a maximum of 300 characters and a minimum of 10 characters
-Location - it should consist of a maximum of 30 characters
-Tagged Pets - the user can tag none, one, or many of all pets. There is no limit on the number of tagged pets
-There should be created one more field that will be automatically generated:
-Date of publication - when a picture is added or edited, the date of publication is automatically generated
-"""
+
+def validate_image_less_than_5mgb(image):
+    filesize = image.file.size
+    megabyte_limit = 5.0
+    if filesize > megabyte_limit * (1024**2):
+        raise ValidationError(f"Max file size is 5MBs")
 
 
 class Photo(models.Model):
@@ -24,6 +21,8 @@ class Photo(models.Model):
 
     # Requires mediafiles to work correctly
     photo = models.ImageField(
+        upload_to='mediafiles/pet_photo/',
+        validators=(validate_image_less_than_5mgb,),
         null=False,
         blank=True,
     )
@@ -52,5 +51,5 @@ class Photo(models.Model):
 
     tagged_pets = models.ManyToManyField(
         Pet,
-        null=True,
+        blank=True,
     )
