@@ -1,6 +1,6 @@
-{% extends 'base.html' %}
-
+{% extends "base/base.html" %}
 {% block content %}
+
     <!-- Start Register Section -->
     <div class="login-register-div">
         <div class="login-register-box">
@@ -25,7 +25,7 @@
         <div class="second-option">
 
             <!-- Link to Login Page -->
-            <p>Have an account? <a href="#">Log in</a></p>
+            <p>Have an account? <a href="{% url 'login-user' %}">Log in</a></p>
         </div>
     </div>
     <!-- End Register Section -->
