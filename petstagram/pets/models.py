@@ -1,10 +1,13 @@
 from django.db import models
+from django.utils.text import slugify
+from petstagram.basic.model_mixins import StrFromFieldsMixin
 
 # Create your models here.
-from django.utils.text import slugify
 
 
-class Pet(models.Model):
+class Pet(StrFromFieldsMixin, models.Model):
+    str_fields = ('id', 'name')
+
     MAX_NAME = 30
     name = models.CharField(
         max_length=MAX_NAME,
@@ -41,3 +44,5 @@ class Pet(models.Model):
         # Update /  enters into built-in function save and continues saving the info in the DB
         return super().save(*args, **kwargs)
 
+    # def __str__(self):
+    #     return f'ID = {self.id}; Name = {self.name}'
