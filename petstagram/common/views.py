@@ -1,35 +1,25 @@
+import pyperclip
 from django.shortcuts import render, redirect
+from django.urls import reverse
+
+from petstagram.basic.photo_utils import apply_likes_count, apply_user_liked_photo
+from petstagram.common.models import PhotoLike
+from petstagram.common.utils import get_user_liked_photo, get_photo_url
+from petstagram.photos.models import Photo
+
 
 # common\views.py
 
 # Create your views here.
-from petstagram.common.models import PhotoLike
-from petstagram.photos.models import Photo
-
-
-# TODO: !!!Докато нямам users така ... после го оправяме!!! when authentication is available!!!
-def apply_likes_photo(photo):
-    photo.likes_count = photo.photolike_set.count()
-    return photo
-
-
-def apply_user_liked_photo(photo):
-    photo.is_liked_by_user = photo.likes_count > 0
-    return photo
 
 
 def common(request):
-    photos = [apply_likes_photo(photo) for photo in Photo.objects.all()]
+    photos = [apply_likes_count(photo) for photo in Photo.objects.all()]
     photos = [apply_user_liked_photo(photo) for photo in photos]
     context = {
         "photos": photos
     }
     return render(request, "common/home-page.html", context)
-
-
-def get_user_liked_photo(photo_id):
-    # TODO: when auth
-    return PhotoLike.objects.filter(photo_id=photo_id)
 
 
 def like_photo(request, photo_id):
@@ -41,7 +31,6 @@ def like_photo(request, photo_id):
         PhotoLike.objects.create(
             photo_id=photo_id,
         )
-
     # Create
     # # Variant 1
     # photo_like = PhotoLike(
@@ -55,7 +44,11 @@ def like_photo(request, photo_id):
     # PhotoLike.objects.create(
     #     photo=photo,
     # )
-    redirected_path = request.META['HTTP_REFERER'] + f'#photo-{photo_id}'
-    return redirect(redirected_path)
+    return redirect(get_photo_url(request, photo_id))
 
 
+def share_photo(request, photo_id):
+    photo_details_url = reverse('details-photo', kwargs={'pk': photo_id})
+
+    pyperclip.copy(photo_details_url)
+    return redirect(get_photo_url(request, photo_id))

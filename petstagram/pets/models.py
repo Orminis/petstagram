@@ -21,7 +21,7 @@ class Pet(StrFromFieldsMixin, models.Model):
     slug = models.SlugField(
         unique=True,
         null=True,
-        blank=False,
+        blank=True,
     )
     date_of_birth = models.DateField(
         null=True,
@@ -37,8 +37,8 @@ class Pet(StrFromFieldsMixin, models.Model):
             self.slug = slugify(f'{self.id}-{self.name}')
         """
         Without the `if` the following scenario might happen:
-            the url is `/pets/1-alba` and at later stage pet name is changed to albata 
-            the new url will be `/pets/1-albata`, but `/pets/1-alba` will not work.
+        the url is `/pets/1-alba` and at later stage pet name is changed to albata 
+        the new url will be `/pets/1-albata`, but `/pets/1-alba` will not work.
         """
 
         # Update /  enters into built-in function save and continues saving the info in the DB

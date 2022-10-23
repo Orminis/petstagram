@@ -23,7 +23,8 @@ class PhotoComment(models.Model):
         null=False,
         blank=True,
     )
-
+    class Meta:
+        ordering = ['-date_time_of_publication']
 
 class PhotoLike(models.Model):
     # Photo's field for likes is named - `{NAME_OF_THIS_MODEL.lower()}_set` !!!
