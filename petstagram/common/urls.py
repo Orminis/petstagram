@@ -6,4 +6,5 @@ from petstagram.common import views
 
 urlpatterns = [
     path("", views.common, name='home'),
+    path("like/<int:photo_id>", views.like_photo, name="like-photo")
 ]
